@@ -23,6 +23,9 @@ def main():
         # Generate calendar for the month of the result date
         result_month = result_date.month
         result_year = result_date.year
+        calendar_month = calendar.month_name[result_month]
+        st.write(f"Full calendar month: {calendar_month} {result_year}")
+
         cal = calendar.monthrange(result_year, result_month)
         first_day_of_month = datetime.date(result_year, result_month, 1)
         last_day_of_month = datetime.date(result_year, result_month, cal[1])
