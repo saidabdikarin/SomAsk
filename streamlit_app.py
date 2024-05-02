@@ -11,6 +11,28 @@ def highlight_dates(s, selected_date):
     end_of_week = selected_date + datetime.timedelta(days=6 - selected_date.weekday())
     return ['background-color: yellow' if start_of_week <= date.date() <= end_of_week else '' for date in s]
 
+def create_monthly_table(year, month):
+    """Create a pandas DataFrame representing a monthly calendar table."""
+    # Get the number of days in the month
+    _, num_days = calendar.monthrange(year, month)
+
+    # Create a list of dates for the month
+    dates = pd.date_range(start=datetime.date(year, month, 1), end=datetime.date(year, month, num_days), freq='D')
+
+    # Create a DataFrame with the dates
+    df = pd.DataFrame(dates, columns=['Date'])
+
+    # Add weekday names as column headers
+    df['Weekday'] = df['Date'].dt.day_name().str[:3]
+
+    # Rearrange the columns to match a typical monthly calendar layout
+    df = df[['Weekday', 'Date']]
+
+    # Fill in empty cells with an empty string
+    df = df.reindex(pd.date_range(start=df['Date'].min(), end=df['Date'].max(), freq='D')).fillna('')
+
+    return df
+
 def main():
     st.title("Weeks Calculator")
     start_date = st.date_input("Select a starting date", datetime.datetime.today())
@@ -23,16 +45,13 @@ def main():
         # Generate calendar for the month of the result date
         result_month = result_date.month
         result_year = result_date.year
-        cal = calendar.monthrange(result_year, result_month)
-        first_day_of_month = datetime.date(result_year, result_month, 1)
-        last_day_of_month = datetime.date(result_year, result_month, cal[1])
-        
-        # Create date range for the month
-        date_range = pd.date_range(start=first_day_of_month, end=last_day_of_month, freq='D')
-        df = pd.DataFrame(date_range, columns=['Date'])
+        monthly_table = create_monthly_table(result_year, result_month)
 
-        # Display the month with the week highlighted as a pandas table
-        st.dataframe(df.style.apply(highlight_dates, selected_date=result_date, axis=0))
+        # Highlight the week of the result date
+        monthly_table = monthly_table.style.apply(highlight_dates, selected_date=result_date, axis=0)
+
+        # Display the monthly table
+        st.dataframe(monthly_table)
 
 if __name__ == "__main__":
     main()
