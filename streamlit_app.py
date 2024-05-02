@@ -12,7 +12,6 @@ def highlight_dates(s, selected_date):
 
 def display_calendar(selected_date):
     """Generate and display a calendar month with the selected week highlighted."""
-    # Create date range for the month
     result_month = selected_date.month
     result_year = selected_date.year
     first_day_of_month = datetime.date(result_year, result_month, 1)
@@ -42,7 +41,7 @@ def main():
 
         # Display the month of the result date with the selected week highlighted
         styled_calendar = display_calendar(result_date)
-        st.write(styled_calendar.render(), unsafe_allow_html=True)
+        st.dataframe(styled_calendar)  # Use st.dataframe to display the styled calendar
 
 if __name__ == "__main__":
     main()
