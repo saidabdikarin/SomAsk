@@ -45,6 +45,7 @@ def main():
         st.write(f"Month containing the selected week: {result_date.strftime('%B')} {result_year}")
 
         # Display table
+        Week_days = st.date_input("Select a starting date", datetime.datetime.today())
         st.write("Day", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
         for week in calendar_matrix:
             st.write('', *week)
