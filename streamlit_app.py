@@ -1,2 +1,3 @@
 import streamlit as st
-streamlit run date_clock.py
+st.title('Hello, World!')
+st.write("Welcome to your first Streamlit app!")
