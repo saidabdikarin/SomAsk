@@ -31,9 +31,6 @@ def main():
         date_range = pd.date_range(start=first_day_of_month, end=last_day_of_month, freq='D')
         df = pd.DataFrame(date_range, columns=['Date'])
 
-        # Add the day of the week as a new column
-        df['Day'] = df['Date'].dt.day_name()
-
         # Display the month with the week highlighted
         st.dataframe(df.style.apply(highlight_dates, selected_date=result_date, axis=0))
 
