@@ -1,3 +1,14 @@
 import streamlit as st
-st.title('Hello, World!')
-st.write("Welcome to your first Streamlit app!")
+import time
+
+def main():
+    st.title('Digital Clock')
+    clock_placeholder = st.empty()
+
+    while True:
+        current_time = time.strftime('%H:%M:%S %p')
+        clock_placeholder.markdown(f"## {current_time}")
+        time.sleep(1)
+
+if __name__ == "__main__":
+    main()
