@@ -30,15 +30,19 @@ def main():
         # Create date range for the month
         date_range = pd.date_range(start=first_day_of_month, end=last_day_of_month, freq='D')
         df = pd.DataFrame(date_range, columns=['Date'])
-        df['Day'] = df['Date'].dt.day_name()
 
         # Display the month with the week highlighted
+        st.write(f"Month of the result date: {result_date.strftime('%B')} {result_year}")
         st.dataframe(df.style.apply(highlight_dates, selected_date=result_date, axis=0))
 
-        # Display the complete week with date and day name
-        st.subheader(f"{calendar.month_name[result_month]} {result_year}")
-        week_df = df[(df['Date'] >= start_of_week) & (df['Date'] <= end_of_week)]
-        st.table(week_df[['Date', 'Day']])
+        # Display the complete week with date and name of the day in a separate table
+        st.write("Complete Week:")
+        start_of_week = result_date - datetime.timedelta(days=result_date.weekday())
+        end_of_week = start_of_week + datetime.timedelta(days=6)
+        week_dates = pd.date_range(start=start_of_week, end=end_of_week)
+        week_df = pd.DataFrame(week_dates, columns=['Date'])
+        week_df['Day'] = week_df['Date'].dt.day_name()
+        st.table(week_df)
 
 if __name__ == "__main__":
     main()
