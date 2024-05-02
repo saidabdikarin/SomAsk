@@ -31,7 +31,7 @@ def main():
         date_range = pd.date_range(start=first_day_of_month, end=last_day_of_month, freq='D')
         df = pd.DataFrame(date_range, columns=['Date'])
 
-        # Display the month with the week highlighted
+        # Display the month with the week highlighted as a pandas table
         st.dataframe(df.style.apply(highlight_dates, selected_date=result_date, axis=0))
 
 if __name__ == "__main__":
