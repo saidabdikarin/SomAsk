@@ -3,15 +3,8 @@ import datetime
 import pandas as pd
 import calendar
 
-def highlight_dates(s, selected_date):
-    """Highlight the week of the selected date."""
-    selected_date = pd.to_datetime(selected_date).date()
-    start_of_week = selected_date - datetime.timedelta(days=selected_date.weekday())
-    end_of_week = selected_date + datetime.timedelta(days=6 - selected_date.weekday())
-    return ['background-color: yellow' if start_of_week <= date.date() <= end_of_week else '' for date in s]
-
 def display_calendar(selected_date):
-    """Generate and display a calendar month with the selected week highlighted."""
+    """Generate and display a calendar month containing the selected week."""
     result_month = selected_date.month
     result_year = selected_date.year
     first_day_of_month = datetime.date(result_year, result_month, 1)
@@ -22,13 +15,15 @@ def display_calendar(selected_date):
     df['Weekday'] = df['Date'].dt.weekday
     df['Week'] = df['Date'].dt.isocalendar().week
 
-    # Prepare a grid-like view for the calendar
-    month_calendar = pd.pivot_table(df, values='Day', index='Week', columns='Weekday', fill_value='')
+    # Filter the DataFrame to include only rows corresponding to the selected week
+    start_of_week = selected_date - datetime.timedelta(days=selected_date.weekday())
+    end_of_week = selected_date + datetime.timedelta(days=6 - selected_date.weekday())
+    filtered_df = df[(df['Date'] >= start_of_week) & (df['Date'] <= end_of_week)]
 
-    # Apply styling to highlight the selected week
-    styled_calendar = month_calendar.style.applymap(lambda x: 'background-color: yellow' if x != '' and 
-        (first_day_of_month + datetime.timedelta(days=int(x)-1)).date() in pd.date_range(start_of_week, end_of_week) else '')
-    return styled_calendar
+    # Prepare a grid-like view for the calendar
+    month_calendar = pd.pivot_table(filtered_df, values='Day', index='Week', columns='Weekday', fill_value='')
+
+    return month_calendar
 
 def main():
     st.title("Weeks Calculator")
@@ -39,9 +34,9 @@ def main():
         result_date = start_date + datetime.timedelta(weeks=num_weeks)
         st.write(f"Date after {num_weeks} weeks: {result_date.strftime('%Y-%m-%d')}")
 
-        # Display the month of the result date with the selected week highlighted
-        styled_calendar = display_calendar(result_date)
-        st.dataframe(styled_calendar)  # Use st.dataframe to display the styled calendar
+        # Display the entire month containing the selected week
+        month_calendar = display_calendar(result_date)
+        st.dataframe(month_calendar)
 
 if __name__ == "__main__":
     main()
