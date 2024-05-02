@@ -20,10 +20,11 @@ def display_calendar(selected_date):
     date_range = pd.date_range(start=first_day_of_month, end=last_day_of_month, freq='D')
     df = pd.DataFrame(date_range, columns=['Date'])
     df['Day'] = df['Date'].dt.day
+    df['Weekday'] = df['Date'].dt.weekday
+    df['Week'] = df['Date'].dt.isocalendar().week
 
     # Prepare a grid-like view for the calendar
-    df['Weekday'] = df['Date'].dt.weekday
-    month_calendar = pd.pivot_table(df, values='Day', index=df['Date'].dt.week, columns='Weekday', fill_value='')
+    month_calendar = pd.pivot_table(df, values='Day', index='Week', columns='Weekday', fill_value='')
 
     # Apply styling to highlight the selected week
     styled_calendar = month_calendar.style.applymap(lambda x: 'background-color: yellow' if x != '' and 
