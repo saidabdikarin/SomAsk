@@ -33,7 +33,13 @@ def main():
         df = pd.DataFrame(date_range, columns=['Date'])
 
         # Create a calendar matrix
-        calendar_matrix = df['Date'].apply(lambda x: (x.day, x.strftime('%A'))).values.reshape(-1, 7)
+        calendar_matrix = []
+        week = []
+        for index, row in df.iterrows():
+            week.append((row['Date'].day, row['Date'].strftime('%A')))
+            if len(week) == 7:
+                calendar_matrix.append(week)
+                week = []
 
         # Display the month with the selected week highlighted and day names at the top
         st.write(f"Month containing the selected week: {result_date.strftime('%B')} {result_year}")
