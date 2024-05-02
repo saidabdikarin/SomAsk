@@ -1,50 +1,53 @@
 import streamlit as st
-import matplotlib.pyplot as plt
-import numpy as np
-import datetime
-import time
+import pydeck as pdk
 
-def draw_clock():
-    now = datetime.datetime.now()
-    fig, ax = plt.subplots()
-    
-    # Set up the clock face
-    ax.set_xlim(-1.5, 1.5)
-    ax.set_ylim(-1.5, 1.5)
-    ax.set_aspect('equal')
-    ax.axis('off')
-    
-    # Hour marks
-    for deg in range(0, 360, 30):
-        ax.plot([0.9 * np.sin(np.deg2rad(deg)), np.sin(np.deg2rad(deg))],
-                [0.9 * np.cos(np.deg2rad(deg)), np.cos(np.deg2rad(deg))], 'k')
-    
-    # Hour hand
-    hour_angle = (now.hour % 12 + now.minute / 60) * 30
-    ax.plot([0, 0.5 * np.sin(np.deg2rad(hour_angle))],
-            [0, 0.5 * np.cos(np.deg2rad(hour_angle))], 'r', linewidth=6)
-    
-    # Minute hand
-    minute_angle = now.minute * 6
-    ax.plot([0, 0.7 * np.sin(np.deg2rad(minute_angle))],
-            [0, 0.7 * np.cos(np.deg2rad(minute_angle))], 'b', linewidth=4)
-    
-    # Second hand
-    second_angle = now.second * 6
-    ax.plot([0, 0.9 * np.sin(np.deg2rad(second_angle))],
-            [0, 0.9 * np.cos(np.deg2rad(second_angle))], 'g', linewidth=2)
+# JavaScript to get user's geolocation
+location_fetcher = """
+<button onclick="getLocation()">Get Location</button>
+<script>
+function getLocation() {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(showPosition);
+  } else {
+    console.log("Geolocation is not supported by this browser.");
+  }
+}
+function showPosition(position) {
+  document.getElementById('latitude').value = position.coords.latitude;
+  document.getElementById('longitude').value = position.coords.longitude;
+}
+</script>
+<input type="text" id="latitude" hidden>
+<input type="text" id="longitude" hidden>
+"""
 
-    return fig
+# Streamlit component to fetch location
+st.markdown(location_fetcher, unsafe_allow_html=True)
 
-def main():
-    st.title('Analog Clock')
-    clock_placeholder = st.empty()
-    
-    while True:
-        fig = draw_clock()
-        clock_placeholder.pyplot(fig)
-        time.sleep(1)  # Update the clock every second
-        plt.close(fig)  # Close the plot to free up memory
+latitude = st.empty()
+longitude = st.empty()
 
-if __name__ == "__main__":
-    main()
+# Default location: Toronto, Canada
+default_lat = 43.65107
+default_lon = -79.347015
+
+# Get user-provided location, if available
+user_lat = st.text_input("Latitude", value="")
+user_lon = st.text_input("Longitude", value="")
+
+if user_lat and user_lon:
+    latitude, longitude = float(user_lat), float(user_lon)
+else:
+    latitude, longitude = default_lat, default_lon
+
+# Display the map
+st.pydeck_chart(pdk.Deck(
+    map_style='mapbox://styles/mapbox/light-v9',
+    initial_view_state=pdk.ViewState(
+        latitude=latitude,
+        longitude=longitude,
+        zoom=11,
+        pitch=50,
+    ),
+    layers=[],
+))
