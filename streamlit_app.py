@@ -30,10 +30,15 @@ def main():
         # Create date range for the month
         date_range = pd.date_range(start=first_day_of_month, end=last_day_of_month, freq='D')
         df = pd.DataFrame(date_range, columns=['Date'])
+        df['Day'] = df['Date'].dt.day_name()
 
         # Display the month with the week highlighted
-        st.write(f"{calendar.month_name[result_month]} {result_year}")
         st.dataframe(df.style.apply(highlight_dates, selected_date=result_date, axis=0))
+
+        # Display the complete week with date and day name
+        st.subheader(f"{calendar.month_name[result_month]} {result_year}")
+        week_df = df[(df['Date'] >= start_of_week) & (df['Date'] <= end_of_week)]
+        st.table(week_df[['Date', 'Day']])
 
 if __name__ == "__main__":
     main()
