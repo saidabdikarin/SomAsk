@@ -45,10 +45,9 @@ def main():
         st.write(f"Month containing the selected week: {result_date.strftime('%B')} {result_year}")
 
         # Display table
-        with st.beta_container():
-            st.write("Day", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
-            for week in calendar_matrix:
-                st.write('', *week)
+        st.write("Day", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+        for week in calendar_matrix:
+            st.write('', *week)
 
 if __name__ == "__main__":
     main()
