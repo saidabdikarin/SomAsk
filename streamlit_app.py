@@ -43,9 +43,12 @@ def main():
 
         # Display the month with the selected week highlighted and day names at the top
         st.write(f"Month containing the selected week: {result_date.strftime('%B')} {result_year}")
-        st.write("Mon\tTue\tWed\tThu\tFri\tSat\tSun")
-        for week in calendar_matrix:
-            st.write('\t'.join([str(day[0]) for day in week]))
+
+        # Display table
+        with st.beta_container():
+            st.write("Day", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun")
+            for week in calendar_matrix:
+                st.write('', *week)
 
 if __name__ == "__main__":
     main()
