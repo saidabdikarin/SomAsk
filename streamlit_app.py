@@ -32,9 +32,14 @@ def main():
         date_range = pd.date_range(start=first_day_of_month, end=last_day_of_month, freq='D')
         df = pd.DataFrame(date_range, columns=['Date'])
 
-        # Display the month with the selected week highlighted
+        # Create a calendar matrix
+        calendar_matrix = df['Date'].apply(lambda x: (x.day, x.strftime('%A'))).values.reshape(-1, 7)
+
+        # Display the month with the selected week highlighted and day names at the top
         st.write(f"Month containing the selected week: {result_date.strftime('%B')} {result_year}")
-        st.dataframe(df.style.apply(highlight_dates, selected_week=result_week, axis=0))
+        st.write("Mon\tTue\tWed\tThu\tFri\tSat\tSun")
+        for week in calendar_matrix:
+            st.write('\t'.join([str(day[0]) for day in week]))
 
 if __name__ == "__main__":
     main()
