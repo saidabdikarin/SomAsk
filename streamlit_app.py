@@ -26,18 +26,15 @@ def main():
         cal = calendar.monthrange(result_year, result_month)
         first_day_of_month = datetime.date(result_year, result_month, 1)
         last_day_of_month = datetime.date(result_year, result_month, cal[1])
-
+        
         # Create date range for the month
         date_range = pd.date_range(start=first_day_of_month, end=last_day_of_month, freq='D')
         df = pd.DataFrame(date_range, columns=['Date'])
 
-        # Display the full calendar month with the week highlighted
-        st.write(f"{calendar.month_name[result_month]} {result_year}")
-        st.write(f"{' | '.join(calendar.day_abbr)}")
-        for week in calendar.monthcalendar(result_year, result_month):
-            week_str = ' | '.join([str(day) if day > 0 else '' for day in week])
-            st.write(week_str)
+        # Add the day of the week as a new column
+        df['Day'] = df['Date'].dt.day_name()
 
+        # Display the month with the week highlighted
         st.dataframe(df.style.apply(highlight_dates, selected_date=result_date, axis=0))
 
 if __name__ == "__main__":
